@@ -3,7 +3,7 @@
     public enum Status
     {
         DRAFT,
-        DEPRECATED,
-        OK
+        ARCHIVED,
+        PUBLISHED
     }
 }

@@ -1,0 +1,72 @@
+﻿@using TodoList.Contracts.Services
+@using TodoList.Shared.Domains
+@rendermode InteractiveServer
+@inject ITodoDataService TodoDataService;
+<Button Color="Color.Primary" Clicked="@ShowModal">Add Todo</Button>
+
+<Modal @ref="modalRef">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Add todo</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+        <Field>
+            <FieldLabel>Title</FieldLabel>
+            <TextEdit Placeholder="Enter title" @bind-Text="@title" />
+        </Field>
+        <Field>
+            <FieldLabel>Description</FieldLabel>
+            <TextEdit Placeholder="Enter description" @bind-Text="@description" />
+        </Field>
+        <Field>
+            <FieldLabel>Author</FieldLabel>
+            <TextEdit Placeholder="Enter author" @bind-Text="@author"/>
+        </Field>
+        <Field>
+            <FieldLabel>Deadline</FieldLabel>
+                <DatePicker TValue="DateTime?" @bind-Date="@deadline" Placeholder="Enter deadline" />
+        </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Clicked="@Submit">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    // reference to the modal component
+    private Modal modalRef;
+    DateTime? deadline;
+    String? title;
+    String? description;
+    String? author;
+
+    private Task ShowModal()
+    {
+        return modalRef.Show();
+    }
+
+    private Task HideModal()
+    {
+        return modalRef.Hide();
+    }
+
+    private async Task Submit()
+    {
+        await AddTodo();
+        await HideModal();
+    }
+
+    private async Task AddTodo()
+    {
+        await TodoDataService.AddTodo(new Todo
+            {
+                Title = title,
+                Description = description,
+                Author = author,
+                DeadLine = deadline,
+            });
+    }
+}

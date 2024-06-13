@@ -1,0 +1,23 @@
+﻿@using TodoList.Shared.Domains
+
+<Card>
+    <CardBody>
+        <CardTitle Size="3">
+            @todo.Title
+        </CardTitle>
+        <CardText>
+            @todo.Author
+        </CardText>
+        <CardText>
+            @todo.Description
+        </CardText>
+        <CardText>
+            @todo.DeadLine.ToString()
+        </CardText>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter]
+    public Todo todo { get; set; }
+}

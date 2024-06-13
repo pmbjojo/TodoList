@@ -1,0 +1,31 @@
+﻿@using TodoList.Contracts.Services
+@using TodoList.Shared.Domains
+@inject ITodoDataService TodoDataService;
+
+@if (todos == null)
+{
+    <p>Loading...</p>
+}
+else if (todos.Count == 0)
+{
+    <p>Todos empty</p>
+}
+else
+{
+    <Grid Columns="GridColumns.Are3">
+        @foreach (var todo in todos)
+        {
+            <TodoCard todo="@todo" />
+        }
+    </Grid>
+}
+
+@code {
+    public List<Todo> todos { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        Task.Delay(10000);
+        todos = (await TodoDataService.GetAllTodos()).ToList();
+        Console.WriteLine("TodosList: " + todos.Count);
+    }
+}

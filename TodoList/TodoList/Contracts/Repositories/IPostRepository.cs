@@ -1,12 +1,12 @@
 ﻿using TodoList.Shared.Domains;
 
-namespace TodoList.Client.Services
+namespace TodoList.Contracts.Repositories
 {
-    public interface IPostService
+    public interface IPostRepository
     {
         Task<IEnumerable<Post>> GetAllPosts();
-        Task<Post> GetPost(int postId);
-        Task<Post> AddPost(Post post);
+        Task<Post?> GetPostById(int postId);
+        Task AddPost(Post post);
         Task UpdatePost(Post post);
         Task DeletePost(int postId);
     }

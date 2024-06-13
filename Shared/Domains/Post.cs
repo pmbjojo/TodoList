@@ -1,10 +1,17 @@
-﻿namespace TodoList.Shared.Domains
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TodoList.Shared.Domains
 {
     public class Post
     {
-            private string title { get; set; }
-            private string description { get; set; }
-            private string author { get; set; }
-            private Status status { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int PostId { get; set; }
+
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? Author { get; set; }
+        public Status? Status { get; set; }
     }
 }
