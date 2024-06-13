@@ -20,9 +20,12 @@ namespace TodoList.Repositories
             return Todo;
         }
 
-        public Task DeleteTodo(int TodoId)
+        public async Task DeleteTodo(Todo todo)
         {
-            throw new NotImplementedException();
+            _appDbContext.Todos.Attach(todo);
+            _appDbContext.Todos.Remove(todo);
+            await _appDbContext.SaveChangesAsync();
+
         }
 
         public async Task<IEnumerable<Todo>> GetAllTodos()
@@ -35,9 +38,11 @@ namespace TodoList.Repositories
             return await _appDbContext.Todos.FirstOrDefaultAsync(p => p.TodoId == TodoId);
         }
 
-        public Task UpdateTodo(Todo Todo)
+        public async Task UpdateTodo(Todo Todo)
         {
-            throw new NotImplementedException();
+            _appDbContext.Todos.Update(Todo);
+            await _appDbContext.SaveChangesAsync();
+
         }
 
         public void Dispose()

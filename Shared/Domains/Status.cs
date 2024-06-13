@@ -2,8 +2,8 @@
 {
     public enum Status
     {
-        DRAFT,
-        ARCHIVED,
-        PUBLISHED
+        COMPLETED,
+        ONHOLD,
+        TODO
     }
 }

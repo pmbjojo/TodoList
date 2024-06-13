@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using TodoList.Contracts.Repositories;
-using TodoList.Contracts.Services;
+﻿using TodoList.Contracts.Repositories;
+using TodoList.Shared.Contracts.Services;
 using TodoList.Shared.Domains;
 
 namespace TodoList.Services
@@ -18,9 +17,9 @@ namespace TodoList.Services
             return await _TodoRepository.AddTodo(Todo) ;
         }
 
-        public Task DeleteTodo(int TodoId)
+        public async Task DeleteTodo(Todo todo)
         {
-            throw new NotImplementedException();
+            await _TodoRepository.DeleteTodo(todo);
         }
 
         public async Task<IEnumerable<Todo>> GetAllTodos()
@@ -29,14 +28,14 @@ namespace TodoList.Services
             return Todos;
         }
 
-        public Task<Todo> GetTodoById(int TodoId)
+        public async Task<Todo> GetTodoById(int TodoId)
         {
-            throw new NotImplementedException();
+            return await _TodoRepository.GetTodoById(TodoId);
         }
 
-        public Task UpdateTodo(Todo Todo)
+        public async Task UpdateTodo(Todo Todo)
         {
-            throw new NotImplementedException();
+            await _TodoRepository.UpdateTodo(Todo);
         }
     }
 }

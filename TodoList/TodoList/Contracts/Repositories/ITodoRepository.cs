@@ -9,6 +9,6 @@ namespace TodoList.Contracts.Repositories
         Task<Todo?> GetTodoById(int TodoId);
         Task<Todo> AddTodo(Todo Todo);
         Task UpdateTodo(Todo Todo);
-        Task DeleteTodo(int TodoId);
+        Task DeleteTodo(Todo todo);
     }
 }

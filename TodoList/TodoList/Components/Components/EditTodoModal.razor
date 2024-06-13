@@ -1,0 +1,76 @@
+﻿@using TodoList.Shared.Contracts.Services
+@using TodoList.Services
+@using TodoList.Shared.Domains
+@rendermode InteractiveServer
+@inject ITodoDataService TodoDataService;
+@inject TodosRefreshService TodosRefreshService;
+
+<Button Color="Color.Primary" Clicked="@ShowModal">Edit todo</Button>
+
+<Modal @ref="modalRef">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Edit todo</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Title</FieldLabel>
+                <TextEdit Placeholder="Enter title" @bind-Text="@todo.Title" />
+            </Field>
+            <Field>
+                <FieldLabel>Description</FieldLabel>
+                <MemoEdit @bind-Text="@todo.Description"
+                          Placeholder="Enter description" AutoSize />
+            </Field>
+            <Field>
+                <FieldLabel>Author</FieldLabel>
+                <TextEdit Placeholder="Enter author" @bind-Text="@todo.Author" />
+            </Field>
+            <Field>
+                <FieldLabel>Deadline</FieldLabel>
+                <DatePicker TValue="DateTime?" @bind-Date="@todo.DeadLine" Placeholder="Enter deadline" />
+            </Field>
+            <Field>
+                <FieldLabel>Status</FieldLabel>
+                <Select TValue="Status?" @bind-SelectedValue="@todo.Status">
+                    <SelectItem Value="Status.COMPLETED">Completed</SelectItem>
+                    <SelectItem Value="Status.ONHOLD">On Hold</SelectItem>
+                    <SelectItem Value="Status.TODO">Todo</SelectItem>
+                </Select>
+            </Field> 
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Clicked="@Submit">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public Todo todo { get; set; }
+    private Modal modalRef;
+
+    private Task ShowModal()
+    {
+        return modalRef.Show();
+    }
+
+    private Task HideModal()
+    {
+        return modalRef.Hide();
+    }
+
+    private async Task Submit()
+    {
+        await EditTodo();
+        await HideModal();
+    }
+
+    private async Task EditTodo()
+    {
+        await TodoDataService.UpdateTodo(todo);
+        await TodosRefreshService.NotifyTodosModified();
+    }
+}

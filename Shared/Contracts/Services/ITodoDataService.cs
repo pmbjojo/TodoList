@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using TodoList.Shared.Domains;
+﻿using TodoList.Shared.Domains;
 
-namespace TodoList.Contracts.Services
+namespace TodoList.Shared.Contracts.Services
 {
     public interface ITodoDataService
     {
@@ -9,6 +8,6 @@ namespace TodoList.Contracts.Services
         Task<Todo> GetTodoById(int TodoId);
         Task<Todo> AddTodo(Todo Todo);
         Task UpdateTodo(Todo Todo);
-        Task DeleteTodo(int TodoId);
+        Task DeleteTodo(Todo todo);
     }
 }

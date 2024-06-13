@@ -1,6 +1,12 @@
 ﻿@using TodoList.Shared.Domains
+@using TodoList.Services
+@using TodoList.Shared.Contracts.Services
+@rendermode InteractiveServer
+@inject TodosRefreshService TodosRefreshService;
+@inject ITodoDataService TodoDataService;
 
-<Card>
+
+<Card Background="@Background">
     <CardBody>
         <CardTitle Size="3">
             @todo.Title
@@ -15,9 +21,38 @@
             @todo.DeadLine.ToString()
         </CardText>
     </CardBody>
+    <CardFooter>
+        <EditTodoModal todo="@todo"/>
+        <Button Color="Color.Danger" Clicked="@Delete">Delete</Button>
+        <Button Color="Color.Secondary" Type="ButtonType.Link" To="@link">Details</Button>
+    </CardFooter>
 </Card>
 
 @code {
     [Parameter]
     public Todo todo { get; set; }
+    public String link { get; set; }
+    public Background Background { get; set; }
+    private async Task RefreshTodo()
+    {
+        link = "/todos/" + todo.TodoId.ToString();
+        Background = todo.Status switch
+        {
+            Status.COMPLETED => Background.Success,
+            Status.ONHOLD => Background.Warning,
+            Status.TODO => Background.Light,
+            _ => Background.Light
+        };
+        StateHasChanged();
+    }
+    private async Task Delete(){
+        await TodoDataService.DeleteTodo(todo);
+        await TodosRefreshService.NotifyTodosModified();
+    }
+    protected override Task OnInitializedAsync()
+    {
+        TodosRefreshService.OnTodosModified += RefreshTodo;
+        RefreshTodo();
+        return base.OnInitializedAsync();
+    }
 }

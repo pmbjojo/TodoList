@@ -1,7 +1,11 @@
-﻿@using TodoList.Contracts.Services
+﻿@using TodoList.Shared.Contracts.Services;
+@using TodoList.Services
 @using TodoList.Shared.Domains
 @rendermode InteractiveServer
 @inject ITodoDataService TodoDataService;
+@inject TodosRefreshService TodosRefreshService;
+
+
 <Button Color="Color.Primary" Clicked="@ShowModal">Add Todo</Button>
 
 <Modal @ref="modalRef">
@@ -15,10 +19,11 @@
             <FieldLabel>Title</FieldLabel>
             <TextEdit Placeholder="Enter title" @bind-Text="@title" />
         </Field>
-        <Field>
-            <FieldLabel>Description</FieldLabel>
-            <TextEdit Placeholder="Enter description" @bind-Text="@description" />
-        </Field>
+            <Field>
+                <FieldLabel>Description</FieldLabel>
+                <MemoEdit @bind-Text="@description"
+                          Placeholder="Enter description" AutoSize />
+            </Field>
         <Field>
             <FieldLabel>Author</FieldLabel>
             <TextEdit Placeholder="Enter author" @bind-Text="@author"/>
@@ -26,6 +31,14 @@
         <Field>
             <FieldLabel>Deadline</FieldLabel>
                 <DatePicker TValue="DateTime?" @bind-Date="@deadline" Placeholder="Enter deadline" />
+        </Field>
+        <Field>
+            <FieldLabel>Status</FieldLabel>
+            <Select TValue="Status" @bind-SelectedValue="@status">
+                <SelectItem Value="Status.COMPLETED">Completed</SelectItem>
+                <SelectItem Value="Status.ONHOLD">On Hold</SelectItem>
+                <SelectItem Value="Status.TODO">Todo</SelectItem>
+            </Select>
         </Field>
         </ModalBody>
         <ModalFooter>
@@ -42,6 +55,7 @@
     String? title;
     String? description;
     String? author;
+    Status status;
 
     private Task ShowModal()
     {
@@ -67,6 +81,9 @@
                 Description = description,
                 Author = author,
                 DeadLine = deadline,
+                Status = status
             });
+        await TodosRefreshService.NotifyTodosModified();
+
     }
 }

@@ -1,6 +1,9 @@
-﻿@using TodoList.Contracts.Services
+﻿@using TodoList.Shared.Contracts.Services
+@using TodoList.Services
 @using TodoList.Shared.Domains
 @inject ITodoDataService TodoDataService;
+@inject TodosRefreshService TodosRefreshService;
+@rendermode InteractiveServer
 
 @if (todos == null)
 {
@@ -21,11 +24,22 @@ else
 }
 
 @code {
-    public List<Todo> todos { get; set; } = default!;
+    public List<Todo> todos { get; set; } = new List<Todo>();
+    private async Task RefreshTodos()
+    {
+        todos = (await TodoDataService.GetAllTodos()).ToList();
+        StateHasChanged();
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        Task.Delay(10000);
-        todos = (await TodoDataService.GetAllTodos()).ToList();
-        Console.WriteLine("TodosList: " + todos.Count);
+        TodosRefreshService.OnTodosModified += RefreshTodos;
+        await RefreshTodos();
+        await base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        TodosRefreshService.OnTodosModified -= RefreshTodos;
     }
 }

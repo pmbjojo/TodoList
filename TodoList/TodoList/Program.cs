@@ -2,12 +2,13 @@ using Blazorise;
 using Microsoft.EntityFrameworkCore;
 using TodoList.Components;
 using TodoList.Contracts.Repositories;
-using TodoList.Contracts.Services;
 using TodoList.Data;
 using TodoList.Repositories;
 using TodoList.Services;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Microsoft.AspNetCore.Mvc;
+using TodoList.Shared.Contracts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,10 +26,9 @@ builder.Services
 
 builder.Services.AddHttpClient();
 builder.Services.AddDbContextFactory<AppDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
-builder.Services.AddScoped<IPostRepository, PostRepository>();
-builder.Services.AddScoped<IPostDataService, PostDataService>();
 builder.Services.AddScoped<ITodoDataService, TodoDataService>();
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
+builder.Services.AddScoped<TodosRefreshService, TodosRefreshService>();
 
 var app = builder.Build();
 
@@ -54,9 +54,14 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(TodoList.Client._Imports).Assembly);
 
-/*app.MapGet("/api/posts", () =>
+app.MapGet("/api/todos", async (ITodoDataService todosDataService) =>
 {
+    return await todosDataService.GetAllTodos();
+});
 
-})*/
+app.MapGet("/api/todos/{id}", async ([FromRoute] int id, [FromServices] ITodoDataService todosDataService) =>
+{
+    return await todosDataService.GetTodoById(id);
+});
 
 app.Run();
